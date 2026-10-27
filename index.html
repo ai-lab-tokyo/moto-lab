@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="ja">
+  <meta charset="utf-8" /><meta
+    name="viewport"
+    content="width=device-width,initial-scale=1"
+  /><title>MOTO LAB / Dirt dynamics</title>
+  <script type="module" crossorigin src="/moto-lab/assets/index-7ylhL785.js"></script>
+  <link rel="stylesheet" crossorigin href="/moto-lab/assets/index-CFQsDrXt.css">
+
+  <body data-screen="loading">
+    <div id="loading-panel" role="status">MOTO LAB<span>コースを準備しています…</span></div>
+    <canvas id="world"></canvas>
+    <div id="touch-controls" hidden aria-label="タッチ操作">
+      <div class="touch-zone touch-steer" data-touch-zone="steer"><span>左右にスライド<br>STEER</span></div>
+      <div class="touch-zone touch-drive" data-touch-zone="drive"><span>上：アクセル<br>下：前ブレーキ</span></div>
+    </div>
+    <header>
+      <span class="badge">MOTO LAB <small>01 / PROTOTYPE</small></span>
+      <h1>土の上で、違いを感じる。</h1>
+      <p>DIRT DYNAMICS · ローポリ モトクロス試走場</p>
+    </header>
+    <aside>
+      <h2>BIKE SETUP</h2>
+      <label>コース<select id="course"><option value="loop">周回 / 521m</option><option value="technical">テクニカル / 1483m</option><option value="reference">参考図 / CP 1–11</option><option value="test">直線試験場</option></select></label>
+      <details class="environment-settings"><summary>路面・天候・入力</summary>
+      <label>路面<select id="surface"><option value="dry">乾燥土</option><option value="hard">硬い土</option><option value="wet">湿った土</option></select></label>
+      <label>天候<select id="weather"><option value="sunny">晴れ</option><option value="cloudy">曇り</option><option value="rain">雨</option></select></label>
+      <p>天候と路面は独立設定です。</p>
+      <label>入力<select id="input-mode"><option value="auto">パッド優先</option><option value="keyboard">キーボード</option></select></label>
+      </details>
+      <details class="environment-settings"><summary>練習・キーボード</summary>
+      <button id="practice-start">弱＋30km/hで開始</button>
+      <label>速度目安<select id="practiceSpeed"><option value="0">練習OFF</option><option value="30">30 km/h</option><option value="40">40 km/h</option><option value="50">50 km/h</option></select></label>
+      <label>最大ギア<select id="maxGear"><option value="2">2速</option><option value="3" selected>3速</option><option value="5">5速</option></select></label>
+      <label>キー平滑化<select id="keyboardSmooth"><option value="0">OFF</option><option value="1">ON</option></select></label>
+      <p>まず弱＋30km/h＋平滑化ONで比較。最大ギアは練習中のみ。速度・ギア変更でスタートへ戻ります。下り坂を自動制動する制限ではありません。</p>
+      </details>
+      <label>運転支援<select id="assist"><option value="off">OFF</option><option value="weak">弱</option><option value="strong" selected>強</option></select></label>
+      <label>レスポンス<select id="response"><option value="direct">鋭い</option><option value="mellow">穏やか</option></select></label>
+      <label>トルク帯<select id="torqueMap"><option value="balanced">標準</option><option value="low">低中速型</option><option value="high">高回転型</option></select></label>
+      <p>強は旋回力も補助して走りやすく。弱／OFFはタイヤの限界を重視。TC/LCは独立、OFFでも基本のバランス制御は働きます。</p>
+      <label>変速<select id="transmission"><option value="auto">AUTO</option><option value="manual">MANUAL</option></select></label>
+      <button id="sound" aria-pressed="false">エンジン音を有効化</button>
+      <label>音量<input id="volume" type="range" min="0" max="1" step="0.01" value="0.6" /></label>
+      <label>ビュー<select id="camera"><option value="chase">追従</option><option value="diagonal">斜め後方</option><option value="side">横</option><option value="overview">俯瞰</option></select></label>
+      <label
+        >FI 燃料補正
+        <select id="fi">
+          <option value="-8">−8% / Lean</option>
+          <option value="0" selected>0% / Base</option>
+          <option value="8">+8% / Rich</option>
+        </select></label
+      ><label
+        >IG 点火補正
+        <select id="ig">
+          <option value="-6">−6° / Soft</option>
+          <option value="0" selected>0° / Base</option>
+          <option value="4">+4° / Advance</option>
+        </select></label
+      ><label
+        >TC
+        <select id="tc">
+          <option value="0">OFF</option>
+          <option value="1" selected>弱</option>
+          <option value="2">強</option>
+        </select></label
+      ><label
+        >サスペンション
+        <select id="suspension">
+          <option value="soft">Soft</option>
+          <option value="standard" selected>Standard</option>
+          <option value="firm">Firm</option>
+        </select></label
+      ><label class="check"
+        ><input id="rumble" type="checkbox" checked />振動を有効にする</label
+      ><button id="launch">LC 待機 / 解除 [L]</button
+      ><button id="reset">スタートに戻る [R]</button
+      ><button id="save">設定Aを保存</button
+      ><button id="swap">A/B 入れ替え [Tab]</button>
+      <button id="export-trace">走行データをCSV保存</button><p>直近180秒。リセットで記録を開始し直します。</p>
+      <p id="preset">現在: B · Aは初期設定</p>
+      <p id="pad">ゲームパッドのボタンを押して接続</p>
+    </aside>
+    <section id="telemetry"></section>
+    <footer>
+      W / S 加速・前ブレーキ　A / D 旋回　Space 後ブレーキ　C クラッチ　↑ ↓
+      前後荷重　Q / E 手動変速（MANUALへ）<br />パッド: R2 加速 · L2 前ブレーキ · L1 後ブレーキ
+      · R1 クラッチ · 左スティック 旋回 · 右Y 荷重 · □/× 変速 · △ LC · ○
+      リセット<br /><span
+        >実測校正前の比較用モデル / 振動・入力はOSとブラウザに依存 / HTTPS
+        または localhost</span
+      >
+    </footer>
+    <div id="error" hidden></div>
+  </body>
+</html>
