@@ -8,15 +8,17 @@
   <link rel="icon" type="image/png" sizes="192x192" href="/moto-lab/previews/pr-6/icons/bike-rider-192.png" />
   <link rel="apple-touch-icon" sizes="180x180" href="/moto-lab/previews/pr-6/icons/bike-rider-180.png" />
   <meta name="theme-color" content="#193c38" />
-  <script type="module" crossorigin src="/moto-lab/previews/pr-6/assets/index-yZtRSmUN.js"></script>
-  <link rel="stylesheet" crossorigin href="/moto-lab/previews/pr-6/assets/index-l3cM7Xmh.css">
+  <script type="module" crossorigin src="/moto-lab/previews/pr-6/assets/index-CE4zE0cF.js"></script>
+  <link rel="stylesheet" crossorigin href="/moto-lab/previews/pr-6/assets/index-C4nfuOkY.css">
 
   <body data-screen="loading">
     <div id="loading-panel" role="status">MOTO LAB<span>コースを準備しています…</span></div>
     <canvas id="world"></canvas>
     <div id="touch-controls" hidden aria-label="タッチ操作">
-      <div class="touch-zone touch-steer" data-touch-zone="steer"><span>左右にスライド<br>STEER</span><i class="touch-dot" aria-hidden="true"></i></div>
-      <div class="touch-zone touch-drive" data-touch-zone="drive"><span>上下：アクセル・ブレーキ<br>左右：ステアリング</span><i class="touch-dot" aria-hidden="true"></i></div>
+      <div class="touch-meter steer-meter" aria-hidden="true"><i></i></div>
+      <div class="touch-meter drive-meter" aria-hidden="true"><i></i></div>
+      <div class="touch-zone touch-steer" data-touch-zone="steer"><span>左右にスライド<br>STEER</span></div>
+      <div class="touch-zone touch-drive" data-touch-zone="drive"><span>上下：アクセル・ブレーキ<br>左右：ステアリング</span></div>
     </div>
     <header>
       <span class="badge">MOTO LAB <small>01 / PROTOTYPE</small></span>
